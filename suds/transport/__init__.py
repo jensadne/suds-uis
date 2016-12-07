@@ -58,7 +58,7 @@ class Request(UnicodeMixin):
 URL: %s
 HEADERS: %s
 MESSAGE:
-%s""" % (self.url, self.headers, self.message.encode("utf-8"))
+%s""" % (self.url, self.headers, self.message.decode("utf-8"))
 
 
 class Reply(UnicodeMixin):
@@ -93,7 +93,7 @@ class Reply(UnicodeMixin):
 CODE: %s
 HEADERS: %s
 MESSAGE:
-%s""" % (self.code, self.headers, self.message.encode("utf-8"))
+%s""" % (self.code, self.headers, self.message.decode("utf-8"))
 
 
 class Transport:
