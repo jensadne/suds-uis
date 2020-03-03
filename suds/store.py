@@ -21,6 +21,7 @@ document content to be distributed alongside the suds library.
 
 """
 
+from builtins import object
 import suds
 
 
@@ -527,7 +528,7 @@ soap5_encoding_schema = suds.byte_str("""\
 """)
 
 
-class DocumentStore:
+class DocumentStore(object):
     """
     The I{suds} document store provides a local repository for XML documents.
 
@@ -566,7 +567,7 @@ class DocumentStore:
         protocol, location = self.__split(url)
         content = self.__find(location)
         if protocol == 'suds' and content is None:
-            raise Exception, 'location "%s" not in document store' % location
+            raise Exception('location "%s" not in document store' % location)
         return content
 
     def __find(self, location):

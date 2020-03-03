@@ -15,6 +15,8 @@
 # written by: Jeff Ortel ( jortel@redhat.com )
 
 
+from past.builtins import basestring
+from builtins import object
 from suds import *
 from suds.sax import Namespace, splitPrefix
 
@@ -63,7 +65,7 @@ def isqref(object):
         isinstance(object[1], basestring))
 
 
-class Filter:
+class Filter(object):
     def __init__(self, inclusive=False, *items):
         self.inclusive = inclusive
         self.items = items

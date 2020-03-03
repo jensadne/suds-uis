@@ -18,11 +18,13 @@
 The I{builder} module provides an wsdl/xsd defined types factory
 """
 
+from past.builtins import basestring
+from builtins import object
 from suds import *
 from suds.sudsobject import Factory
 
 
-class Builder:
+class Builder(object):
     """ Builder used to construct an object for types defined in the schema """
 
     def __init__(self, resolver):

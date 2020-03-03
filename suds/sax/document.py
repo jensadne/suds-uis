@@ -18,12 +18,14 @@
 Provides XML I{document} classes.
 """
 
+from past.builtins import basestring
+from builtins import object
 from suds import *
 from suds.sax import *
 from suds.sax.element import Element
 
 
-class Document:
+class Document(object):
     """ An XML Document """
 
     DECL = '<?xml version="1.0" encoding="UTF-8"?>'

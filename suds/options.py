@@ -18,6 +18,7 @@
 Suds basic options classes.
 """
 
+from past.builtins import basestring
 from suds.cache import Cache, NoCache
 from suds.properties import *
 from suds.store import DocumentStore, defaultDocumentStore

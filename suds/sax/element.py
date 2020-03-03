@@ -18,6 +18,9 @@
 Provides XML I{element} classes.
 """
 
+from builtins import str
+from past.builtins import basestring
+from builtins import object
 from suds import *
 from suds.sax import *
 from suds.sax.text import Text
@@ -158,7 +161,7 @@ class Element(UnicodeMixin):
             root.append(a.clone(self))
         for c in self.children:
             root.append(c.clone(self))
-        for item in self.nsprefixes.items():
+        for item in list(self.nsprefixes.items()):
             root.addPrefix(item[0], item[1])
         return root
 
@@ -567,11 +570,11 @@ class Element(UnicodeMixin):
         @return: A mapped prefix.
         @rtype: basestring
         """
-        for item in self.nsprefixes.items():
+        for item in list(self.nsprefixes.items()):
             if item[1] == uri:
                 prefix = item[0]
                 return prefix
-        for item in self.specialprefixes.items():
+        for item in list(self.specialprefixes.items()):
             if item[1] == uri:
                 prefix = item[0]
                 return prefix
@@ -592,11 +595,11 @@ class Element(UnicodeMixin):
         @rtype: [basestring,...]
         """
         result = []
-        for item in self.nsprefixes.items():
+        for item in list(self.nsprefixes.items()):
             if self.matcher[match](item[1], uri):
                 prefix = item[0]
                 result.append(prefix)
-        for item in self.specialprefixes.items():
+        for item in list(self.specialprefixes.items()):
             if self.matcher[match](item[1], uri):
                 prefix = item[0]
                 result.append(prefix)
@@ -617,7 +620,7 @@ class Element(UnicodeMixin):
             c.promotePrefixes()
         if self.parent is None:
             return
-        for p,u in self.nsprefixes.items():
+        for p,u in list(self.nsprefixes.items()):
             if p in self.parent.nsprefixes:
                 pu = self.parent.nsprefixes[p]
                 if pu == u:
@@ -730,7 +733,7 @@ class Element(UnicodeMixin):
         result = []
         result.append('%s<%s' % (tab, self.qname()))
         result.append(self.nsdeclarations())
-        for a in [unicode(a) for a in self.attributes]:
+        for a in [str(a) for a in self.attributes]:
             result.append(' %s' % a)
         if self.isempty():
             result.append('/>')
@@ -755,7 +758,7 @@ class Element(UnicodeMixin):
         result = []
         result.append('<%s' % self.qname())
         result.append(self.nsdeclarations())
-        for a in [unicode(a) for a in self.attributes]:
+        for a in [str(a) for a in self.attributes]:
             result.append(' %s' % a)
         if self.isempty():
             result.append('/>')
@@ -785,7 +788,7 @@ class Element(UnicodeMixin):
             if self.expns is not None:
                 d = ' xmlns="%s"' % self.expns
                 s.append(d)
-        for item in self.nsprefixes.items():
+        for item in list(self.nsprefixes.items()):
             (p,u) = item
             if self.parent is not None:
                 ns = self.parent.resolvePrefix(p)
@@ -910,7 +913,7 @@ class Element(UnicodeMixin):
         return NodeIterator(self)
 
 
-class NodeIterator:
+class NodeIterator(object):
     """
     The L{Element} child node iterator.
     @ivar pos: The current position
@@ -927,7 +930,7 @@ class NodeIterator:
         self.pos = 0
         self.children = parent.children
 
-    def next(self):
+    def __next__(self):
         """
         Get the next child.
         @return: The next child.
@@ -942,7 +945,7 @@ class NodeIterator:
             raise StopIteration()
 
 
-class PrefixNormalizer:
+class PrefixNormalizer(object):
     """
     The prefix normalizer provides namespace prefix normalization.
     @ivar node: A node to normalize.
@@ -999,7 +1002,7 @@ class PrefixNormalizer:
         @rtype: set
         """
         s = set()
-        for ns in n.nsprefixes.items():
+        for ns in list(n.nsprefixes.items()):
             if self.permit(ns):
                 s.add(ns[1])
         return s
@@ -1078,7 +1081,7 @@ class PrefixNormalizer:
         for n in self.branch:
             n.nsprefixes = {}
         n = self.node
-        for u, p in self.prefixes.items():
+        for u, p in list(self.prefixes.items()):
             n.addPrefix(p, u)
 
     def permit(self, ns):

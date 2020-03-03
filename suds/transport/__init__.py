@@ -18,6 +18,7 @@ Contains transport interface (classes).
 
 """
 
+from builtins import object
 from suds import UnicodeMixin
 
 
@@ -96,7 +97,7 @@ MESSAGE:
 %s""" % (self.code, self.headers, self.message.decode("utf-8"))
 
 
-class Transport:
+class Transport(object):
     """The transport I{interface}."""
 
     def __init__(self):

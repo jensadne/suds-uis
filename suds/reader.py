@@ -20,6 +20,7 @@ caching system.
 """
 
 
+from builtins import object
 from suds.cache import Cache, NoCache
 from suds.plugin import PluginContainer
 from suds.sax.parser import Parser
@@ -27,7 +28,7 @@ from suds.store import DocumentStore
 from suds.transport import Request
 
 
-class Reader:
+class Reader(object):
     """
     Provides integration with the cache.
     @ivar options: An options object.

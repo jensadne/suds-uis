@@ -18,6 +18,7 @@
 The I{service definition} provides a textual representation of a service.
 """
 
+from builtins import range
 from suds import *
 import suds.metrics as metrics
 from suds.sax import Namespace
@@ -80,7 +81,7 @@ class ServiceDefinition(UnicodeMixin):
         timer.start()
         for port in self.service.ports:
             p = self.findport(port)
-            for op in port.binding.operations.values():
+            for op in list(port.binding.operations.values()):
                 m = p[0].method(op.name)
                 binding = m.binding.input
                 method = (m.name, binding.param_defs(m))
@@ -138,7 +139,7 @@ class ServiceDefinition(UnicodeMixin):
 
     def publictypes(self):
         """Get all public types."""
-        for t in self.wsdl.schema.types.values():
+        for t in list(self.wsdl.schema.types.values()):
             if t in self.params: continue
             if t in self.types: continue
             item = (t, t)
@@ -152,7 +153,7 @@ class ServiceDefinition(UnicodeMixin):
         WSDL document.
         """
         used = [ns[0] for ns in self.prefixes]
-        used += [ns[0] for ns in self.wsdl.root.nsprefixes.items()]
+        used += [ns[0] for ns in list(self.wsdl.root.nsprefixes.items())]
         for n in range(0,1024):
             p = 'ns%d'%n
             if p not in used:
@@ -235,6 +236,6 @@ class ServiceDefinition(UnicodeMixin):
     def __unicode__(self):
         try:
             return self.description()
-        except Exception, e:
+        except Exception as e:
             log.exception(e)
         return tostr(e)

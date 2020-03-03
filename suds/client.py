@@ -18,7 +18,12 @@
 The I{2nd generation} service proxy provides access to web services.
 See I{README.txt}
 """
+from __future__ import absolute_import
 
+from future import standard_library
+standard_library.install_aliases()
+from builtins import str
+from builtins import object
 import suds
 from suds import *
 import suds.bindings.binding
@@ -37,12 +42,12 @@ from suds.transport import TransportError, Request
 from suds.transport.https import HttpAuthenticated
 from suds.umx.basic import Basic as UmxBasic
 from suds.wsdl import Definitions
-import sudsobject
+from . import sudsobject
 
-from cookielib import CookieJar
+from http.cookiejar import CookieJar
 from copy import deepcopy
-import httplib
-from urlparse import urlparse
+import http.client
+from urllib.parse import urlparse
 
 from logging import getLogger
 log = getLogger(__name__)
@@ -181,11 +186,11 @@ class Client(UnicodeMixin):
         if ( suds.__build__ ):
             s.append('  build: %s' % suds.__build__)
         for sd in self.sd:
-            s.append('\n\n%s' % unicode(sd))
+            s.append('\n\n%s' % str(sd))
         return ''.join(s)
 
 
-class Factory:
+class Factory(object):
     """
     A factory for instantiating types defined in the wsdl
     @ivar resolver: A schema type resolver.
@@ -223,7 +228,7 @@ class Factory:
         else:
             try:
                 result = self.builder.build(type)
-            except Exception, e:
+            except Exception as e:
                 log.error("create '%s' failed", name, exc_info=True)
                 raise BuildError(name, e)
         timer.stop()
@@ -239,7 +244,7 @@ class Factory:
         self.resolver = PathResolver(self.wsdl, ps)
 
 
-class ServiceSelector:
+class ServiceSelector(object):
     """
     The B{service} selector is used to select a web service.
     In most cases, the wsdl only defines (1) service in which access
@@ -312,20 +317,20 @@ class ServiceSelector:
         """
         service = None
         if not len(self.__services):
-            raise Exception, 'No services defined'
+            raise Exception('No services defined')
         if isinstance(name, int):
             try:
                 service = self.__services[name]
                 name = service.name
             except IndexError:
-                raise ServiceNotFound, 'at [%d]' % name
+                raise ServiceNotFound('at [%d]' % name)
         else:
             for s in self.__services:
                 if name == s.name:
                     service = s
                     break
         if service is None:
-            raise ServiceNotFound, name
+            raise ServiceNotFound(name)
         return PortSelector(self.__client, service.ports, name)
 
     def __ds(self):
@@ -341,7 +346,7 @@ class ServiceSelector:
             return self.__find(ds)
 
 
-class PortSelector:
+class PortSelector(object):
     """
     The B{port} selector is used to select a I{web service} B{port}.
     In cases where multiple ports have been defined and no default has been
@@ -413,13 +418,13 @@ class PortSelector:
         """
         port = None
         if not len(self.__ports):
-            raise Exception, 'No ports defined: %s' % self.__qn
+            raise Exception('No ports defined: %s' % self.__qn)
         if isinstance(name, int):
             qn = '%s[%d]' % (self.__qn, name)
             try:
                 port = self.__ports[name]
             except IndexError:
-                raise PortNotFound, qn
+                raise PortNotFound(qn)
         else:
             qn = '.'.join((self.__qn, name))
             for p in self.__ports:
@@ -427,7 +432,7 @@ class PortSelector:
                     port = p
                     break
         if port is None:
-            raise PortNotFound, qn
+            raise PortNotFound(qn)
         qn = '.'.join((self.__qn, port.name))
         return MethodSelector(self.__client, port.methods, qn)
 
@@ -444,7 +449,7 @@ class PortSelector:
             return self.__find(dp)
 
 
-class MethodSelector:
+class MethodSelector(object):
     """
     The B{method} selector is used to select a B{method} by name.
     @ivar __client: A suds client.
@@ -488,11 +493,11 @@ class MethodSelector:
         m = self.__methods.get(name)
         if m is None:
             qn = '.'.join((self.__qn, name))
-            raise MethodNotFound, qn
+            raise MethodNotFound(qn)
         return Method(self.__client, m)
 
 
-class Method:
+class Method(object):
     """
     The I{method} (namespace) object.
     @ivar client: A client object.
@@ -519,10 +524,10 @@ class Method:
         client = clientclass(self.client, self.method)
         try:
             return client.invoke(args, kwargs)
-        except WebFault, e:
+        except WebFault as e:
             if self.faults():
                 raise
-            return (httplib.INTERNAL_SERVER_ERROR, e)
+            return (http.client.INTERNAL_SERVER_ERROR, e)
 
     def faults(self):
         """ get faults option """
@@ -535,7 +540,7 @@ class Method:
         return SoapClient
 
 
-class SoapClient:
+class SoapClient(object):
     """
     A lightweight soap based web client B{**not intended for external use}
     @ivar service: The target method.
@@ -613,7 +618,7 @@ class SoapClient:
             reply = self.options.transport.send(request)
             timer.stop()
             metrics.log.debug('waited %s on server reply', timer)
-        except TransportError, e:
+        except TransportError as e:
             content = e.fp and e.fp.read() or ''
             return self.process_reply(reply=content, status=e.httpcode,
                 description=tostr(e), original_soapenv=original_soapenv)
@@ -623,12 +628,12 @@ class SoapClient:
     def process_reply(self, reply, status=None, description=None,
         original_soapenv=None):
         if status is None:
-            status = httplib.OK
-        if status in (httplib.ACCEPTED, httplib.NO_CONTENT):
+            status = http.client.OK
+        if status in (http.client.ACCEPTED, http.client.NO_CONTENT):
             return
         failed = True
         try:
-            if status == httplib.OK:
+            if status == http.client.OK:
                 log.debug('HTTP succeeded:\n%s', reply)
             else:
                 log.debug('HTTP failed - %d - %s:\n%s', status, description,
@@ -657,19 +662,19 @@ class SoapClient:
             #   An INSTANCE MUST use a "500 Internal Server Error" HTTP status
             # code if the response message is a SOAP Fault.
             replyroot = None
-            if status in (httplib.OK, httplib.INTERNAL_SERVER_ERROR):
+            if status in (http.client.OK, http.client.INTERNAL_SERVER_ERROR):
                 replyroot = _parse(reply)
                 plugins.message.parsed(reply=replyroot)
                 fault = self.get_fault(replyroot)
                 if fault:
-                    if status != httplib.INTERNAL_SERVER_ERROR:
+                    if status != http.client.INTERNAL_SERVER_ERROR:
                         log.warn("Web service reported a SOAP processing "
                             "fault using an unexpected HTTP status code %d. "
                             "Reporting as an internal server error.", status)
                     if self.options.faults:
                         raise WebFault(fault, replyroot)
-                    return (httplib.INTERNAL_SERVER_ERROR, fault)
-            if status != httplib.OK:
+                    return (http.client.INTERNAL_SERVER_ERROR, fault)
+            if status != http.client.OK:
                 if self.options.faults:
                     # (todo)
                     #   Use a more specific exception class here.
@@ -688,7 +693,7 @@ class SoapClient:
             failed = False
             if self.options.faults:
                 return result
-            return (httplib.OK, result)
+            return (http.client.OK, result)
         finally:
             if failed and original_soapenv:
                 log.error(original_soapenv)
@@ -717,7 +722,7 @@ class SoapClient:
         @rtype: dict
         """
         action = self.method.soap.action
-        if isinstance(action, unicode):
+        if isinstance(action, str):
             action = action.encode('utf-8')
         stock = {'Content-Type':'text/xml; charset=utf-8', 'SOAPAction':action}
         result = dict(stock, **self.options.headers)
@@ -742,7 +747,7 @@ class SimClient(SoapClient):
     @classmethod
     def simulation(cls, kwargs):
         """ get whether loopback has been specified in the I{kwargs}. """
-        return kwargs.has_key(SimClient.injkey)
+        return SimClient.injkey in kwargs
 
     def invoke(self, args, kwargs):
         """
@@ -773,7 +778,7 @@ class SimClient(SoapClient):
         raise Exception('reply or msg injection parameter expected');
 
 
-class RequestContext:
+class RequestContext(object):
     """
     A request context.
     Returned when the ''nosend'' options is specified. Allows the caller to

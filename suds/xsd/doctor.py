@@ -19,6 +19,7 @@ The I{doctor} module provides classes for fixing broken (sick)
 schema(s).
 """
 
+from builtins import object
 from suds.sax import Namespace
 from suds.sax.element import Element
 from suds.plugin import DocumentPlugin, DocumentContext
@@ -27,7 +28,7 @@ from logging import getLogger
 log = getLogger(__name__)
 
 
-class Doctor:
+class Doctor(object):
     """
     Schema Doctor.
     """
@@ -64,7 +65,7 @@ class Practice(Doctor):
         return root
 
 
-class TnsFilter:
+class TnsFilter(object):
     """
     Target Namespace filter.
     @ivar tns: A list of target namespaces.
@@ -104,7 +105,7 @@ class TnsFilter:
         return ( matched and not itself )
 
 
-class Import:
+class Import(object):
     """
     An <xs:import/> to be applied.
     @cvar xsdns: The XSD namespace.

@@ -19,6 +19,7 @@ The plugin module provides classes for implementation
 of suds plugins.
 """
 
+from builtins import object
 from suds import *
 
 from logging import getLogger
@@ -63,7 +64,7 @@ class MessageContext(Context):
     pass
 
 
-class Plugin:
+class Plugin(object):
     """
     Plugin base.
     """
@@ -173,7 +174,7 @@ class MessagePlugin(Plugin):
         pass
 
 
-class PluginContainer:
+class PluginContainer(object):
     """
     Plugin container provides easy method invocation.
     @ivar plugins: A list of plugin objects.
@@ -205,10 +206,10 @@ class PluginContainer:
                     plugins.append(p)
             return PluginDomain(ctx, plugins)
         else:
-            raise Exception, 'plugin domain (%s), invalid' % name
+            raise Exception('plugin domain (%s), invalid' % name)
 
 
-class PluginDomain:
+class PluginDomain(object):
     """
     The plugin domain.
     @ivar ctx: A context.
@@ -225,7 +226,7 @@ class PluginDomain:
         return Method(name, self)
 
 
-class Method:
+class Method(object):
     """
     Plugin method.
     @ivar name: The method name.
@@ -252,6 +253,6 @@ class Method:
                 method = getattr(plugin, self.name, None)
                 if method and callable(method):
                     method(ctx)
-            except Exception, pe:
+            except Exception as pe:
                 log.exception(pe)
         return ctx

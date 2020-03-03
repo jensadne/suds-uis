@@ -18,6 +18,7 @@
 The I{wsse} module provides WS-Security.
 """
 
+from builtins import str
 from logging import getLogger
 from suds import *
 from suds.sudsobject import Object

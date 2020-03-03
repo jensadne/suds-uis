@@ -18,6 +18,8 @@
 Provides base classes for XML->object I{unmarshalling}.
 """
 
+from past.builtins import basestring
+from builtins import object
 from suds import *
 from suds.umx import *
 from suds.umx.attrlist import AttrList
@@ -28,7 +30,7 @@ from suds.sudsobject import Factory, merge
 reserved = {'class':'cls', 'def':'dfn'}
 
 
-class Core:
+class Core(object):
     """
     The abstract XML I{node} unmarshaller.  This class provides the
     I{core} unmarshalling functionality.

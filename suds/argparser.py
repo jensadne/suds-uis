@@ -23,6 +23,9 @@ See the parse_args() function description for more detailed information.
 
 """
 
+from builtins import zip
+from builtins import range
+from builtins import object
 __all__ = ["parse_args"]
 
 
@@ -83,7 +86,7 @@ def parse_args(method_name, param_defs, args, kwargs, external_param_processor,
     return arg_parser(args, kwargs, extra_parameter_errors)
 
 
-class _ArgParser:
+class _ArgParser(object):
     """Internal argument parser implementation function object."""
 
     def __init__(self, method_name, param_defs, external_param_processor):
@@ -161,7 +164,7 @@ class _ArgParser:
             return
 
         if self.__kwargs:
-            param_name = self.__kwargs.keys()[0]
+            param_name = list(self.__kwargs.keys())[0]
             if param_name in self.__params_with_arguments:
                 msg = "got multiple values for parameter '%s'"
             else:
@@ -263,7 +266,7 @@ class _ArgParser:
         if len(stack) == 1:
             return stack[0], ancestry
         previous = stack[0]
-        for frame, n in zip(stack[1:], xrange(len(ancestry))):
+        for frame, n in zip(stack[1:], range(len(ancestry))):
             if frame.id() is not ancestry[n]:
                 return previous, ancestry[n:]
             previous = frame
@@ -325,7 +328,7 @@ class _ArgParser:
         self.__push_frames(unmatched_ancestry)
 
 
-class Frame:
+class Frame(object):
     """
     Base _ArgParser context frame.
 

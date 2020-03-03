@@ -19,6 +19,8 @@ Properties classes.
 """
 
 
+from builtins import str
+from builtins import object
 class AutoLinker(object):
     """
     Base class, provides interface for I{automatic} link
@@ -67,23 +69,23 @@ class Link(object):
         """
         if pA in pB.links or \
            pB in pA.links:
-            raise Exception, 'Already linked'
+            raise Exception('Already linked')
         dA = pA.domains()
         dB = pB.domains()
         for d in dA:
             if d in dB:
-                raise Exception, 'Duplicate domain "%s" found' % d
+                raise Exception('Duplicate domain "%s" found' % d)
         for d in dB:
             if d in dA:
-                raise Exception, 'Duplicate domain "%s" found' % d
-        kA = pA.keys()
-        kB = pB.keys()
+                raise Exception('Duplicate domain "%s" found' % d)
+        kA = list(pA.keys())
+        kB = list(pB.keys())
         for k in kA:
             if k in kB:
-                raise Exception, 'Duplicate key %s found' % k
+                raise Exception('Duplicate key %s found' % k)
         for k in kB:
             if k in kA:
-                raise Exception, 'Duplicate key %s found' % k
+                raise Exception('Duplicate key %s found' % k)
         return self
 
     def teardown(self):
@@ -126,7 +128,7 @@ class Endpoint(object):
         return getattr(self.target, name)
 
 
-class Definition:
+class Definition(object):
     """
     Property definition.
     @ivar name: The property name.
@@ -177,7 +179,7 @@ class Definition:
         if len(self.classes) and \
             not isinstance(value, self.classes):
                 msg = '"%s" must be: %s' % (self.name, self.classes)
-                raise AttributeError,msg
+                raise AttributeError(msg)
 
 
     def __repr__(self):
@@ -193,7 +195,7 @@ class Definition:
         return ', '.join(s)
 
 
-class Properties:
+class Properties(object):
     """
     Represents basic application properties.
     Provides basic type validation, default values and
@@ -251,7 +253,7 @@ class Properties:
         """
         if isinstance(other, Properties):
             other = other.defined
-        for n,v in other.items():
+        for n,v in list(other.items()):
             self.set(n, v)
         return self
 
@@ -372,7 +374,7 @@ class Properties:
             history = []
         history.append(self)
         keys = set()
-        keys.update(self.definitions.keys())
+        keys.update(list(self.definitions.keys()))
         for x in self.links:
             if x in history:
                 continue
@@ -408,7 +410,7 @@ class Properties:
         @return: self
         @rtype: L{Properties}
         """
-        for d in self.definitions.values():
+        for d in list(self.definitions.values()):
             self.defined[d.name] = d.default
         return self
 
@@ -434,10 +436,10 @@ class Properties:
     def str(self, history):
         s = []
         s.append('Definitions:')
-        for d in self.definitions.values():
+        for d in list(self.definitions.values()):
             s.append('\t%s' % repr(d))
         s.append('Content:')
-        for d in self.defined.items():
+        for d in list(self.defined.items()):
             s.append('\t%s' % str(d))
         if self not in history:
             history.append(self)
@@ -485,7 +487,7 @@ class Unskin(object):
         return args[0].__pts__
 
 
-class Inspector:
+class Inspector(object):
     """
     Wrapper inspector.
     """

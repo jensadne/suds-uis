@@ -18,6 +18,10 @@
 Contains basic caching classes.
 """
 
+from future import standard_library
+standard_library.install_aliases()
+from builtins import str
+from builtins import object
 import suds
 from suds.transport import *
 from suds.sax.parser import Parser
@@ -28,7 +32,7 @@ from datetime import timedelta
 import os
 from tempfile import gettempdir as tmp
 try:
-    import cPickle as pickle
+    import pickle as pickle
 except Exception:
     import pickle
 
@@ -36,7 +40,7 @@ from logging import getLogger
 log = getLogger(__name__)
 
 
-class Cache:
+class Cache(object):
     """
     An object object cache.
     """
@@ -136,7 +140,7 @@ class FileCache(Cache):
         @type duration: {unit:value}
         """
         if len(duration) == 1:
-            arg = duration.items()[0]
+            arg = list(duration.items())[0]
             if not arg[0] in self.units:
                 raise Exception('must be: %s' % str(self.units))
             self.duration = arg

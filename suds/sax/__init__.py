@@ -28,6 +28,8 @@ prefix and the URI, e.g. I{('tns', 'http://myns')}
 @type encoder: L{Encoder}
 """
 
+from past.builtins import basestring
+from builtins import object
 from suds.sax.enc import Encoder
 
 #
@@ -50,7 +52,7 @@ def splitPrefix(name):
     return None, name
 
 
-class Namespace:
+class Namespace(object):
     """
     The namespace class represents XML namespaces.
     """

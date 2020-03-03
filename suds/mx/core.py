@@ -18,6 +18,7 @@
 Provides I{marshaller} core classes.
 """
 
+from builtins import object
 from suds import *
 from suds.mx import *
 from suds.mx.appender import ContentAppender
@@ -29,7 +30,7 @@ from logging import getLogger
 log = getLogger(__name__)
 
 
-class Core:
+class Core(object):
     """
     An I{abstract} marshaller.  This class implement the core
     functionality of the marshaller.

@@ -18,6 +18,8 @@
 The I{sxbase} module provides I{base} classes representing schema objects.
 """
 
+from builtins import str
+from builtins import object
 from suds import *
 from suds.xsd import *
 from suds.sax.element import Element
@@ -463,7 +465,7 @@ class SchemaObject(UnicodeMixin):
         return ()
 
     def __unicode__(self):
-        return unicode(self.str())
+        return str(self.str())
 
     def __repr__(self):
         s = []
@@ -499,7 +501,7 @@ class SchemaObject(UnicodeMixin):
             i += 1
 
 
-class Iter:
+class Iter(object):
     """
     The content iterator - used to iterate the L{Content} children.  The
     iterator provides a I{view} of the children that is free of container
@@ -508,7 +510,7 @@ class Iter:
     @type stack: list
     """
 
-    class Frame:
+    class Frame(object):
         """ A content iterator frame. """
 
         def __init__(self, sx):
@@ -520,7 +522,7 @@ class Iter:
             self.items = sx.rawchildren
             self.index = 0
 
-        def next(self):
+        def __next__(self):
             """
             Get the I{next} item in the frame's collection.
             @return: The next item or None
@@ -571,7 +573,7 @@ class Iter:
         else:
             raise StopIteration()
 
-    def next(self):
+    def __next__(self):
         """
         Get the next item.
         @return: A tuple: the next (child, ancestry).
@@ -580,15 +582,15 @@ class Iter:
         """
         frame = self.top()
         while True:
-            result = frame.next()
+            result = next(frame)
             if result is None:
                 self.pop()
-                return self.next()
+                return next(self)
             if isinstance(result, Content):
                 ancestry = [f.sx for f in self.stack]
                 return result, ancestry
             self.push(result)
-            return self.next()
+            return next(self)
 
     def __iter__(self):
         return self
@@ -624,7 +626,7 @@ class Content(SchemaObject):
     pass
 
 
-class NodeFinder:
+class NodeFinder(object):
     """
     Find nodes based on flexable criteria.  The I{matcher}
     may be any object that implements a match(n) method.

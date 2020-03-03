@@ -17,13 +17,14 @@
 Provides classes for handling soap multirefs.
 """
 
+from builtins import object
 from suds import *
 from suds.sax.element import Element
 
 
 soapenc = (None, 'http://schemas.xmlsoap.org/soap/encoding/')
 
-class MultiRef:
+class MultiRef(object):
     """
     Resolves and replaces multirefs.
     @ivar nodes: A list of non-multiref nodes.

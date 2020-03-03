@@ -18,6 +18,12 @@
 Suds is a lightweight SOAP Python client providing a Web Service proxy.
 """
 
+from future import standard_library
+standard_library.install_aliases()
+from builtins import hex
+from builtins import str
+from past.builtins import basestring
+from builtins import object
 import sys
 
 
@@ -25,7 +31,7 @@ import sys
 # Project properties
 #
 
-from version import __build__, __version__
+from .version import __build__, __version__
 
 
 #
@@ -81,7 +87,7 @@ class WebFault(Exception):
 # Logging
 #
 
-class Repr:
+class Repr(object):
     def __init__(self, x):
         self.x = x
     def __str__(self):
@@ -92,7 +98,7 @@ class Repr:
 # Utility
 #
 
-class null:
+class null(object):
     """
     The I{null} object.
     Used to pass NULL for optional XML nodes.
@@ -131,7 +137,7 @@ def tostr(object, encoding=None):
         return ''.join(s)
     if isinstance(object, dict):
         s = ['{']
-        for item in object.items():
+        for item in list(object.items()):
             if isinstance(item[0], basestring):
                 s.append(item[0])
             else:
@@ -145,7 +151,7 @@ def tostr(object, encoding=None):
         s.append('}')
         return ''.join(s)
     try:
-        return unicode(object)
+        return str(object)
     except:
         return str(object)
 
@@ -155,7 +161,7 @@ def tostr(object, encoding=None):
 #
 
 if sys.version_info < (3, 0):
-    from cStringIO import StringIO as BytesIO
+    from io import StringIO as BytesIO
 else:
     from io import BytesIO
 
@@ -165,7 +171,7 @@ class UnicodeMixin(object):
         # For Python 3, __str__() and __unicode__() should be identical.
         __str__ = lambda x: x.__unicode__()
     else:
-        __str__ = lambda x: unicode(x).encode('utf-8')
+        __str__ = lambda x: str(x).encode('utf-8')
 
 #   Used instead of byte literals because they are not supported on Python
 # versions prior to 2.6.
@@ -178,7 +184,7 @@ def byte_str(s='', encoding='utf-8', input_encoding='utf-8', errors='strict'):
 
     """
     assert isinstance(s, basestring)
-    if isinstance(s, unicode):
+    if isinstance(s, str):
         return s.encode(encoding, errors)
     if s and encoding != input_encoding:
         return s.decode(input_encoding, errors).encode(encoding, errors)

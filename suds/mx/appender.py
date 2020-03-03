@@ -18,6 +18,7 @@
 Provides appender classes for I{marshalling}.
 """
 
+from builtins import object
 from suds import *
 from suds.mx import *
 from suds.sudsobject import footprint
@@ -26,7 +27,7 @@ from suds.sax.element import Element
 from suds.sax.text import Text
 
 
-class Matcher:
+class Matcher(object):
     """
     Appender matcher.
     @ivar cls: A class object.
@@ -46,7 +47,7 @@ class Matcher:
         return isinstance(x, self.cls)
 
 
-class ContentAppender:
+class ContentAppender(object):
     """
     Appender used to add content to marshalled objects.
     @ivar default: The default appender.
@@ -88,7 +89,7 @@ class ContentAppender:
         appender.append(parent, content)
 
 
-class Appender:
+class Appender(object):
     """
     An appender used by the marshaller to append content.
     @ivar marshaller: A marshaller.
@@ -208,7 +209,7 @@ class PropertyAppender(Appender):
         child = self.node(content)
         child.setText(p.get())
         parent.append(child)
-        for item in p.items():
+        for item in list(p.items()):
             cont = Content(tag=item[0], value=item[1])
             Appender.append(self, child, cont)
 
@@ -240,7 +241,7 @@ class DictAppender(Appender):
             return
         child = self.node(content)
         parent.append(child)
-        for item in d.items():
+        for item in list(d.items()):
             cont = Content(tag=item[0], value=item[1])
             Appender.append(self, child, cont)
 

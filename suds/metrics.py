@@ -18,7 +18,10 @@
 The I{metrics} module defines classes and other resources
 designed for collecting and reporting performance metrics.
 """
+from __future__ import division
 
+from builtins import object
+from past.utils import old_div
 import time
 from suds import *
 from math import modf
@@ -27,7 +30,7 @@ from logging import getLogger
 log = getLogger(__name__)
 
 
-class Timer:
+class Timer(object):
 
     def __init__(self):
         self.started = 0
@@ -59,5 +62,5 @@ class Timer:
         if duration < 60:
             m = modf(duration)
             return '%d.%.3d (seconds)' % jmod(m)
-        m = modf(duration/60)
+        m = modf(old_div(duration,60))
         return '%d.%.3d (minutes)' % jmod(m)

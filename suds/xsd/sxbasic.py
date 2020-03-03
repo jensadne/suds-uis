@@ -19,6 +19,9 @@ The I{sxbasic} module provides classes that represent
 I{basic} schema objects.
 """
 
+from future import standard_library
+standard_library.install_aliases()
+from builtins import object
 from suds import *
 from suds.xsd import *
 from suds.xsd.sxbase import *
@@ -26,13 +29,13 @@ from suds.xsd.query import *
 from suds.sax import Namespace
 from suds.transport import TransportError
 from suds.reader import DocumentReader
-from urlparse import urljoin
+from urllib.parse import urljoin
 
 from logging import getLogger
 log = getLogger(__name__)
 
 
-class RestrictionMatcher:
+class RestrictionMatcher(object):
     """
     For use with L{NodeFinder} to match restriction.
     """
@@ -667,7 +670,7 @@ class Include(SchemaObject):
             root.set(TNS, tns)
         else:
             if self.schema.tns[1] != tns:
-                raise Exception, '%s mismatch' % TNS
+                raise Exception('%s mismatch' % TNS)
 
 
     def description(self):
@@ -738,7 +741,7 @@ class Any(Content):
         return True
 
 
-class Factory:
+class Factory(object):
     """
     @cvar tags: A factory to create object objects based on tag.
     @type tags: {tag:fn,}

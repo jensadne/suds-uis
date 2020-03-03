@@ -18,6 +18,7 @@
 
 """Classes for conversion between XML dates and Python objects."""
 
+from past.builtins import basestring
 from suds import UnicodeMixin
 
 import datetime

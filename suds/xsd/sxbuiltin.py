@@ -19,6 +19,9 @@ The I{sxbuiltin} module provides classes that represent
 XSD I{builtin} schema objects.
 """
 
+from builtins import str
+from past.builtins import basestring
+from builtins import object
 from suds import *
 from suds.xsd import *
 from suds.sax.date import *
@@ -95,9 +98,9 @@ class XLong(XBuiltin):
     def translate(value, topython=True):
         if topython:
             if isinstance(value, basestring) and len(value):
-                return long(value)
+                return int(value)
         else:
-            if isinstance(value, (int, long)):
+            if isinstance(value, int):
                 return str(value)
             return value
 
@@ -166,7 +169,7 @@ class XDateTime(XBuiltin):
             return value
 
 
-class Factory:
+class Factory(object):
 
     tags =\
     {

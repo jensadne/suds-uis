@@ -18,9 +18,11 @@
 Provides XML I{special character} encoder classes.
 """
 
+from past.builtins import basestring
+from builtins import object
 import re
 
-class Encoder:
+class Encoder(object):
     """
     An XML special character encoder/decoder.
     @cvar encodings: A mapping of special characters encoding.

@@ -17,6 +17,7 @@
 Provides classes for (WS) SOAP bindings.
 """
 
+from builtins import object
 from suds import *
 from suds.sax import Namespace
 from suds.sax.document import Document
@@ -37,7 +38,7 @@ from copy import deepcopy
 envns = ('SOAP-ENV', 'http://schemas.xmlsoap.org/soap/envelope/')
 
 
-class Binding:
+class Binding(object):
     """
     The SOAP binding class used to process outgoing and incoming SOAP messages
     per the WSDL port binding.
@@ -88,7 +89,7 @@ class Binding:
         @return: A collection of parameter definitions
         @rtype: [I{pdef},..]
         """
-        raise Exception, 'not implemented'
+        raise Exception('not implemented')
 
     def get_message(self, method, args, kwargs):
         """
@@ -286,7 +287,7 @@ class Binding:
         @return: The XML content for the <body/>
         @rtype: [L{Element},..]
         """
-        raise Exception, 'not implemented'
+        raise Exception('not implemented')
 
     def headercontent(self, method):
         """
@@ -339,7 +340,7 @@ class Binding:
         @return: The body content.
         @rtype: [L{Element},...]
         """
-        raise Exception, 'not implemented'
+        raise Exception('not implemented')
 
     def body(self, content):
         """

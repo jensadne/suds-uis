@@ -20,6 +20,9 @@ that are primarily used for the highly dynamic interactions with
 wsdl/xsd defined types.
 """
 
+from builtins import str
+from past.builtins import basestring
+from builtins import object
 from suds import *
 
 from logging import getLogger
@@ -86,7 +89,7 @@ def footprint(sobject):
     return n
 
 
-class Factory:
+class Factory(object):
 
     cache = {}
 
@@ -110,7 +113,7 @@ class Factory:
             inst = subclass()
         else:
             inst = Object()
-        for a in dict.items():
+        for a in list(dict.items()):
             setattr(inst, a[0], a[1])
         return inst
 
@@ -146,7 +149,7 @@ class Object(UnicodeMixin):
                 self.__keylist__.remove(name)
         except:
             cls = self.__class__.__name__
-            raise AttributeError, "%s has no attribute '%s'" % (cls, name)
+            raise AttributeError("%s has no attribute '%s'" % (cls, name))
 
     def __getitem__(self, name):
         if isinstance(name, int):
@@ -172,14 +175,14 @@ class Object(UnicodeMixin):
         return self.__printer__.tostr(self)
 
 
-class Iter:
+class Iter(object):
 
     def __init__(self, sobject):
         self.sobject = sobject
         self.keylist = self.__keylist(sobject)
         self.index = 0
 
-    def next(self):
+    def __next__(self):
         keylist = self.keylist
         nkeys = len(self.keylist)
         while self.index < nkeys:
@@ -242,7 +245,7 @@ class Property(Object):
         return self
 
 
-class Printer:
+class Printer(object):
     """
     Pretty printing of a Object object.
     """
@@ -325,7 +328,7 @@ class Printer:
             s.append('\n')
             s.append(self.indent(n))
         s.append('{')
-        for item in d.items():
+        for item in list(d.items()):
             s.append('\n')
             s.append(self.indent(n+1))
             if isinstance(item[1], (list,tuple)):

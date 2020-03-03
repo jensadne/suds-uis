@@ -18,10 +18,12 @@ Contains classes for authenticated HTTP transport implementations.
 
 """
 
+from future import standard_library
+standard_library.install_aliases()
 from suds.transport import *
 from suds.transport.http import HttpTransport
 
-import urllib2
+import urllib.request, urllib.error, urllib.parse
 
 
 class HttpAuthenticated(HttpTransport):
@@ -55,7 +57,7 @@ class HttpAuthenticated(HttpTransport):
 
         """
         HttpTransport.__init__(self, **kwargs)
-        self.pm = urllib2.HTTPPasswordMgrWithDefaultRealm()
+        self.pm = urllib.request.HTTPPasswordMgrWithDefaultRealm()
 
     def open(self, request):
         self.addcredentials(request)
@@ -77,7 +79,7 @@ class HttpAuthenticated(HttpTransport):
 
     def u2handlers(self):
         handlers = HttpTransport.u2handlers(self)
-        handlers.append(urllib2.HTTPBasicAuthHandler(self.pm))
+        handlers.append(urllib.request.HTTPBasicAuthHandler(self.pm))
         return handlers
 
 

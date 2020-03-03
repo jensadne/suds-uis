@@ -19,6 +19,7 @@ The I{resolver} module provides a collection of classes that
 provide wsdl/xsd named type resolution.
 """
 
+from builtins import object
 from suds import *
 from suds.sax import splitPrefix, Namespace
 from suds.sudsobject import Object
@@ -30,7 +31,7 @@ from logging import getLogger
 log = getLogger(__name__)
 
 
-class Resolver:
+class Resolver(object):
     """
     An I{abstract} schema-type resolver.
     @ivar schema: A schema object.
@@ -463,7 +464,7 @@ class GraphResolver(TreeResolver):
             pass
 
 
-class Frame:
+class Frame(object):
     def __init__(self, type, resolved=None, ancestry=()):
         self.type = type
         if resolved is None:
@@ -477,7 +478,7 @@ class Frame:
             Repr(self.resolved),
             [Repr(t) for t in self.ancestry])
 
-    class Empty:
+    class Empty(object):
         def __getattr__(self, name):
             if name == 'ancestry':
                 return ()

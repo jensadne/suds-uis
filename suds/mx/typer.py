@@ -18,13 +18,15 @@
 Provides sx typing classes.
 """
 
+from builtins import range
+from builtins import object
 from suds import *
 from suds.mx import *
 from suds.sax import Namespace as NS
 from suds.sax.text import Text
 
 
-class Typer:
+class Typer(object):
     """
     Provides XML node typing as either automatic or manual.
     @cvar types:  A dict of class to xs type mapping.
@@ -33,10 +35,10 @@ class Typer:
 
     types = {
         int : ('int', NS.xsdns),
-        long : ('long', NS.xsdns),
+        int : ('long', NS.xsdns),
         float : ('float', NS.xsdns),
         str : ('string', NS.xsdns),
-        unicode : ('string', NS.xsdns),
+        str : ('string', NS.xsdns),
         Text : ('string', NS.xsdns),
         bool : ('boolean', NS.xsdns),
      }

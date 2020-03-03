@@ -19,6 +19,7 @@ Classes modeling transport options.
 """
 
 
+from past.builtins import basestring
 from suds.transport import *
 from suds.properties import *
 
